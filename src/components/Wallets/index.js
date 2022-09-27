@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { useTheme } from '@mui/material/styles'
 import { Grid, Chip, Typography, Paper } from '@mui/material'
 import { DappifyContext, supportedWallets } from 'react-dappify'
@@ -7,20 +7,28 @@ import { useDispatch } from 'react-redux'
 import { fetchCurrentUser } from 'store/actions/thunks'
 import { useTranslation } from 'react-i18next'
 
+const destination = `/${process.env.REACT_APP_TEMPLATE_NAME}`
+
 const Wallet = () => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const theme = useTheme()
-  const { authenticate } = useContext(DappifyContext)
+  const { authenticate, isAuthenticated } = useContext(DappifyContext)
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(destination)
+    }
+  }, [isAuthenticated, navigate])
 
   const loginUser = async (walletProvider) => {
     try {
       const loggedInUser = await authenticate(walletProvider.payload)
       if (loggedInUser) {
         dispatch(fetchCurrentUser())
-        window.location.replace(`/${process.env.REACT_APP_TEMPLATE_NAME}`)
       }
+      window.location.reload(true)
     } catch (e) {}
   }
 
