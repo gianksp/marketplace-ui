@@ -12,7 +12,7 @@ import AddBusinessIcon from '@mui/icons-material/AddBusiness'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import EditIcon from '@mui/icons-material/Edit'
 import PlaylistRemoveIcon from '@mui/icons-material/PlaylistRemove'
-import RefreshIcon from '@mui/icons-material/Refresh'
+import RefreshButton from 'components/RefreshButton';
 import {
   fetchCurrentUser,
   fetchNftsBreakdown,
@@ -186,20 +186,7 @@ const Details = ({ nft, t }) => {
                 </Tooltip>
               </Grid>
             )}
-            {!incompleteNft && (
-              <Grid item>
-                <Tooltip title="Refresh metadata">
-                  <Button
-                    variant="outlined"
-                    color='info'
-                    className='circular__button'
-                    onClick={() => refreshMetadata()}
-                  >
-                    <RefreshIcon />
-                  </Button>
-                </Tooltip>
-              </Grid>
-            )}
+            <RefreshButton nft={nft} />
           </Grid>
         </Grid>
         <Grid item xs={6}>
