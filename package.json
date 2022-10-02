@@ -80,11 +80,8 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-numeric-separator": "^7.18.6",
     "@testing-library/jest-dom": "^5.16.5",
     "babel-eslint": "^10.0.3",
-    "cross-env": "^7.0.2",
-    "eslint-config-prettier": "^6.7.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-config-standard-react": "^9.2.0",
     "eslint-plugin-import": "^2.18.2",
@@ -98,7 +95,23 @@
     "microbundle-crl": "^0.13.10",
     "msw": "^0.35.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.0.4"
+    "@babel/cli": "^7.18.10",
+    "@babel/plugin-proposal-numeric-separator": "^7.18.6",
+    "@babel/plugin-transform-modules-amd": "^7.18.6",
+    "@babel/preset-react": "^7.18.6",
+    "autoprefixer": "^9.8.8",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-react-app": "^10.0.1",
+    "cross-env": "^7.0.3",
+    "env-cmd": "^10.1.0",
+    "enzyme": "^3.11.0",
+    "eslint-config-prettier": "^8.5.0",
+    "husky": "^8.0.1",
+    "lint-staged": ">=10",
+    "postcss-cli": "^10.0.0",
+    "postcss-import": "^15.0.0",
+    "prettier": "^2.7.1",
+    "requirejs": "^2.3.6"
   },
   "resolutions": {
     "react-error-overlay": "6.0.9"

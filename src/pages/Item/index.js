@@ -9,6 +9,7 @@ import { useTheme } from '@mui/material/styles'
 import ActivityItem from 'components/ActivityItem'
 import ModalPurchase from 'components/ModalPurchase'
 import UserProfileMini from 'components/UserProfileMini'
+import RefreshButton from 'components/RefreshButton'
 import isString from 'lodash/isString'
 import { formatPrice } from 'utils/format'
 
@@ -149,6 +150,7 @@ const ItemDetail = ({ contractAddress, tokenId, t }) => {
                       {t('History')}
                     </Button>
                   </Grid>
+                  <RefreshButton nft={nft} />
                 </Grid>
 
                 <ul className='de_nav'>
