@@ -37,11 +37,11 @@ const UserSales = ({ user, index }) => {
                     cursor: 'pointer'
                   }
                 }}
-                onClick={() =>
+                onClick={() => {
                   navigate(
                     `/${process.env.REACT_APP_TEMPLATE_NAME}/profile/${user.wallet}`
                   )
-                }
+                }}
               >
                 {user.username && cropText(user.username, 12)}
                 {!user.username && formatAddress(user.wallet)}

@@ -203,11 +203,11 @@ export default function Profile({ t }) {
         </Box>
         <Divider sx={{ my: 1, opacity: 0.15 }} />
         <MenuItem
-          onClick={() =>
+          onClick={() => {
             navigate(
               `/${process.env.REACT_APP_TEMPLATE_NAME}/profile/${currentUser.wallet}`
             )
-          }
+          }}
           sx={{ fontSize: '1em', color: theme.palette.text.secondary }}
         >
           <ListItemIcon>
