@@ -176,18 +176,22 @@ const RankingRedux = ({ t }) => {
                             ? 'd-min'
                             : 'd-plus'
                         }
-                      >{`${author.author_sale.daily_sales < 0 ? '' : '+'}${
-                        author.author_sale.daily_sales
-                      }%`}</td>
+                      >
+                        {`${author.author_sale.daily_sales < 0 ? '' : '+'}${
+                          author.author_sale.daily_sales
+                        }%`}
+                      </td>
                       <td
                         className={
                           author.author_sale.weekly_sales < 0
                             ? 'd-min'
                             : 'd-plus'
                         }
-                      >{`${author.author_sale.weekly_sales < 0 ? '' : '+'}${
-                        author.author_sale.weekly_sales
-                      }%`}</td>
+                      >
+                        {`${author.author_sale.weekly_sales < 0 ? '' : '+'}${
+                          author.author_sale.weekly_sales
+                        }%`}
+                      </td>
                       <td>{author.author_sale.floor_price}</td>
                       <td>{author.author_sale.owners}k</td>
                       <td>{author.author_sale.assets}k</td>

@@ -101,11 +101,11 @@ const Author = ({ address, t }) => {
                   <Grid item xs={12}>
                     <Button
                       variant='contained'
-                      onClick={() =>
+                      onClick={() => {
                         navigate(
                           `/${process.env.REACT_APP_TEMPLATE_NAME}/profile/${author.wallet}/manage`
                         )
-                      }
+                      }}
                     >
                       {t('Edit profile')}
                     </Button>

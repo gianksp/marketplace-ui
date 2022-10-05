@@ -89,7 +89,9 @@ export const fetchNftDetail =
     try {
       console.log(`GettingById ${contractAddress} ${tokenId}`)
       const nft = await NFT.getById(contractAddress, tokenId.toString())
-      dispatch(actions.getNftDetail.success(nft))
+      console.log('SUP HERE')
+      console.log(nft)
+      dispatch(actions.getNftDetail.success([nft]))
     } catch (err) {
       dispatch(actions.getNftDetail.failure(err.message))
     }

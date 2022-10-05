@@ -52,11 +52,11 @@ const News = () => {
                     ...
                   </p>
                   <span
-                    onClick={() =>
+                    onClick={() => {
                       navigateTo(
                         `/${process.env.REACT_APP_TEMPLATE_NAME}/news/${blog.id}`
                       )
-                    }
+                    }}
                     className='btn-main'
                   >
                     Read more

@@ -69,12 +69,12 @@ const Footer = ({ t }) => {
                     <div className='social-icons'>
                       {configuration?.social?.facebook && (
                         <span
-                          onClick={() =>
+                          onClick={() => {
                             window.open(
                               configuration?.social?.facebook,
                               '_self'
                             )
-                          }
+                          }}
                         >
                           <i
                             className='fa fa-facebook fa-lg'
@@ -84,9 +84,9 @@ const Footer = ({ t }) => {
                       )}
                       {configuration?.social?.twitter && (
                         <span
-                          onClick={() =>
+                          onClick={() => {
                             window.open(configuration?.social?.twitter, '_self')
-                          }
+                          }}
                         >
                           <i
                             className='fa fa-twitter fa-lg'
@@ -96,12 +96,12 @@ const Footer = ({ t }) => {
                       )}
                       {configuration?.social?.instagram && (
                         <span
-                          onClick={() =>
+                          onClick={() => {
                             window.open(
                               configuration?.social?.instagram,
                               '_self'
                             )
-                          }
+                          }}
                         >
                           <i
                             className='fa fa-instagram fa-lg'
@@ -111,12 +111,12 @@ const Footer = ({ t }) => {
                       )}
                       {configuration?.social?.pinterest && (
                         <span
-                          onClick={() =>
+                          onClick={() => {
                             window.open(
                               configuration?.social?.pinterest,
                               '_self'
                             )
-                          }
+                          }}
                         >
                           <i
                             className='fa fa-pinterest fa-lg'
@@ -136,12 +136,12 @@ const Footer = ({ t }) => {
                       )}
                       {configuration?.social?.telegram && (
                         <span
-                          onClick={() =>
+                          onClick={() => {
                             window.open(
                               configuration?.social?.telegram,
                               '_self'
                             )
-                          }
+                          }}
                         >
                           <i
                             className='fa fa-paper-plane fa-lg'

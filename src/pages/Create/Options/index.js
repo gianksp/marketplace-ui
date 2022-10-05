@@ -88,9 +88,9 @@ const Createpage = ({ t }) => {
                     backgroundColor: theme.palette.action.hover
                   }
                 }}
-                onClick={() =>
+                onClick={() => {
                   navigate(`${process.env.REACT_APP_TEMPLATE_NAME}/create`)
-                }
+                }}
               >
                 <img src='./img/misc/coll-single.png' alt='single' />
                 <h3 style={{ marginTop: '10px' }}>Single</h3>

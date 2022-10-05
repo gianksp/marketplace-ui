@@ -80,11 +80,11 @@ const BidSlide = ({ nft, usdPrice }) => {
                 sx={{ fontSize: '1.25em' }}
                 variant='contained'
                 size='large'
-                onClick={() =>
+                onClick={() => {
                   navigate(
                     `/${process.env.REACT_APP_TEMPLATE_NAME}/item/${nft.collection.address}/${nft.tokenId}`
                   )
-                }
+                }}
               >
                 {t('View artwork')}
               </Button>

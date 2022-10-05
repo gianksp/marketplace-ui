@@ -23,9 +23,9 @@ const UserAvatar = ({ user, size = 50 }) => {
       className='author_list_pp onStep fadeIn'
       alt={user.username}
       src={user.image}
-      onClick={() =>
+      onClick={() => {
         navigate(`${process.env.REACT_APP_TEMPLATE_NAME}/profile/${user.id}`)
-      }
+      }}
       sx={{
         width: size,
         height: size,
@@ -53,9 +53,9 @@ const UserAvatar = ({ user, size = 50 }) => {
 
   const identicon = (
     <Box
-      onClick={() =>
+      onClick={() => {
         navigate(`${process.env.REACT_APP_TEMPLATE_NAME}/profile/${user.id}`)
-      }
+      }}
       sx={{
         cursor: 'pointer',
         '&:hover canvas': {
