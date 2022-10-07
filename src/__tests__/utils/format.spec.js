@@ -1,4 +1,4 @@
-import { formatPrice } from 'utils/format'
+import { formatPrice } from '../../utils/format'
 
 describe('Format Utils', () => {
   test('Returns formated value with 3 decimal points rounded from input string', () => {
