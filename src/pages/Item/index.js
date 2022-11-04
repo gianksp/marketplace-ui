@@ -1,19 +1,29 @@
-import React, { memo, useEffect, useContext } from 'react'
+import React, { memo, useEffect, useContext, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Footer from 'components/Segment/Footer'
 import * as selectors from 'store/selectors'
-import { fetchNftDetail } from 'store/actions/thunks'
-import { Grid, Button, Chip } from '@mui/material'
+import {
+  fetchCurrentUser,
+  fetchNftsBreakdown,
+  fetchUserRanking,
+  fetchHotAuctions,
+  fetchNftShowcase,
+  fetchNftDetail
+} from 'store/actions/thunks'
+import { Grid, Button, Chip, Tooltip } from '@mui/material'
 import { DappifyContext, constants } from 'react-dappify'
 import { useTheme } from '@mui/material/styles'
 import ActivityItem from 'components/ActivityItem'
 import ModalPurchase from 'components/ModalPurchase'
+import ModalSale from 'components/ModalSale'
 import UserProfileMini from 'components/UserProfileMini'
 import RefreshButton from 'components/RefreshButton'
 import isString from 'lodash/isString'
 import { formatPrice } from 'utils/format'
 
 const ItemDetail = ({ contractAddress, tokenId, t }) => {
+  const [isPreview] = useState(window.location.search.includes('preview=true'))
+
   const theme = useTheme()
   const [openDetails, setOpenDetails] = React.useState(true)
   const [openHistory, setOpenHistory] = React.useState(false)
@@ -23,7 +33,8 @@ const ItemDetail = ({ contractAddress, tokenId, t }) => {
   const nft = nftHistory[0] || {}
   const [openCheckout, setOpenCheckout] = React.useState(false)
   const [openCheckoutbid, setOpenCheckoutbid] = React.useState(false)
-  const { configuration } = useContext(DappifyContext)
+  const [isOpenSale, setOpenSale] = useState(false)
+  const { configuration, currentUser } = useContext(DappifyContext)
   const network = constants.NETWORKS[configuration.chainId]
 
   useEffect(() => {
@@ -76,6 +87,15 @@ const ItemDetail = ({ contractAddress, tokenId, t }) => {
       list.push(<ActivityItem nft={nft} key={index} />)
     })
     return list
+  }
+
+  const handleSell = async () => {
+    setOpenSale(false)
+    dispatch(fetchCurrentUser())
+    dispatch(fetchNftsBreakdown())
+    dispatch(fetchUserRanking())
+    dispatch(fetchHotAuctions())
+    dispatch(fetchNftShowcase())
   }
 
   const defaultPlaceholder =
@@ -195,6 +215,26 @@ const ItemDetail = ({ contractAddress, tokenId, t }) => {
                     )}
                     {/* } <button className='btn-main btn2 lead mb-5' onClick={() => setOpenCheckoutbid(true)}>Place Bid</button> */}
                   </div>
+
+                  {isPreview && (
+                    <Grid container sx={{ width: '100%' }}>
+                      <Grid item xs={12}>
+                        <Tooltip title='Sell in this marketplace'>
+                          <Button
+                            variant='contained'
+                            fullwidth
+                            color='primary'
+                            sx={{
+                              width: '100%'
+                            }}
+                            onClick={() => setOpenSale(true)}
+                          >
+                            Sell
+                          </Button>
+                        </Tooltip>
+                      </Grid>
+                    </Grid>
+                  )}
                 </div>
               </div>
             </div>
@@ -213,6 +253,9 @@ const ItemDetail = ({ contractAddress, tokenId, t }) => {
           }}
           isBid={openCheckoutbid}
         />
+      )}
+      {isOpenSale && (
+        <ModalSale nft={nft} isOpen={isOpenSale} onClose={handleSell} t={t} />
       )}
     </div>
   )
