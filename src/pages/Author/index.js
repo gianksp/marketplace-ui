@@ -5,18 +5,27 @@ import Footer from 'components/Segment/Footer'
 import * as selectors from 'store/selectors'
 import { fetchUser } from 'store/actions/thunks'
 import UserAvatar from 'components/UserAvatar'
-import { Grid, Typography, Paper, Button, Divider } from '@mui/material'
+import {
+  Grid,
+  Typography,
+  Paper,
+  Button,
+  Divider,
+  TextField
+} from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { navigate } from '@reach/router'
 import { DappifyContext, utils } from 'react-dappify'
 import moment from 'moment'
 import constants from 'constant'
+import axios from 'axios'
+import isEmpty from 'lodash/isEmpty'
 
 const { formatAddress } = utils.format
 
 const Author = ({ address, t }) => {
   const theme = useTheme()
-  const { isAuthenticated } = useContext(DappifyContext)
+  const { isAuthenticated, configuration } = useContext(DappifyContext)
   const dispatch = useDispatch()
   const authorState = useSelector(selectors.authorState)
   const author = authorState.data || {}
@@ -26,10 +35,13 @@ const Author = ({ address, t }) => {
 
   const currentUserState = useSelector(selectors.currentUserState)
   const currentUser = currentUserState.data || {}
-
   useEffect(() => {
     dispatch(fetchUser(address))
   }, [address, dispatch])
+
+  useEffect(() => {
+    loadNetwork()
+  }, [configuration])
 
   const [filter, setFilter] = useState('owned')
   const onFilterSelect = (e) => {
@@ -40,6 +52,42 @@ const Author = ({ address, t }) => {
   const getBanner = () => {
     if (currentUser && currentUser.banner) return currentUser.banner
     return constants.PLACEHOLDER.PROFILE
+  }
+
+  const [network, setNetwork] = useState({})
+
+  const loadNetwork = async () => {
+    if (!configuration?.chainId) {
+      return
+    }
+    const response = await axios.get(
+      `${process.env.REACT_APP_DAPPIFY_API_URL}/chain/${configuration?.chainId}`,
+      {
+        headers: {
+          'x-api-Key': process.env.REACT_APP_DAPPIFY_API_KEY,
+          accept: 'application/json'
+        }
+      }
+    )
+    setNetwork(response.data)
+  }
+
+  console.log('???????')
+  console.log(network)
+
+  const getExplorer = () => {
+    return network?.explorers?.length > 0 ? network?.explorers[0] : {}
+  }
+
+  const [tokenId, setTokenId] = useState()
+  const [contractAddress, setContractAddress] = useState()
+  const onPreviewNft = () => {
+    console.log(contractAddress)
+    console.log(tokenId)
+
+    navigate(
+      `/${process.env.REACT_APP_TEMPLATE_NAME}/item/${contractAddress}/${tokenId}?preview=true`
+    )
   }
 
   return (
@@ -179,11 +227,60 @@ const Author = ({ address, t }) => {
                   )}
                 />
               )}
+              <Paper
+                sx={{
+                  width: '100%',
+                  padding: 3
+                }}
+              >
+                <Typography variant='h3' fontSize={24} fontWeight='bolb'>
+                  Don't you see your NFTs listed? Add them manually!
+                </Typography>
+                <br />
+                <Grid item>
+                  1. Visit the{' '}
+                  <Button
+                    href={`${getExplorer().url}/address/${currentUser.wallet}`}
+                    target='__blank'
+                  >
+                    {getExplorer()?.name || 'explorer'}
+                  </Button>{' '}
+                  to check your NFT tokens
+                </Grid>
+                <Grid item>
+                  2. Preview by adding below the contract address and token, if
+                  you own it you will be able to sell it
+                </Grid>
+                <Grid item sx={{ mt: 1 }}>
+                  <TextField
+                    id='outlined-basic'
+                    label='Contract address'
+                    variant='outlined'
+                    size='small'
+                    onChange={(e) => setContractAddress(e.target.value)}
+                  />
+                  <TextField
+                    id='outlined-basic'
+                    label='Token Id'
+                    variant='outlined'
+                    size='small'
+                    sx={{ ml: 1 }}
+                    onChange={(e) => setTokenId(e.target.value)}
+                  />
+                  <Button
+                    variant='contained'
+                    disabled={isEmpty(contractAddress) || isEmpty(tokenId)}
+                    onClick={onPreviewNft}
+                    sx={{ ml: 1 }}
+                  >
+                    {t('Preview')}
+                  </Button>
+                </Grid>
+              </Paper>
             </Grid>
           </Grid>
         </Grid>
       </section>
-
       <Footer t={t} />
     </div>
   )

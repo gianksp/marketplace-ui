@@ -20,6 +20,8 @@ import CopyAddress from 'components/CopyAddress'
 import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
+import axios from 'axios'
+import { ethers } from 'ethers'
 
 const { cropText } = utils.format
 
@@ -37,13 +39,60 @@ export default function Profile({ t }) {
     user,
     userProfile
   } = useContext(DappifyContext)
-  const network = constants.NETWORKS[configuration.chainId]
   const currentUserState = useSelector(selectors.currentUserState)
   const currentUser = currentUserState.data || {}
+
+  const [network, setNetwork] = useState({})
+
+  const loadNetwork = async () => {
+    if (!configuration?.chainId) {
+      return
+    }
+    const response = await axios.get(
+      `${process.env.REACT_APP_DAPPIFY_API_URL}/chain/${configuration?.chainId}`,
+      {
+        headers: {
+          'x-api-Key': process.env.REACT_APP_DAPPIFY_API_KEY,
+          accept: 'application/json'
+        }
+      }
+    )
+    setNetwork(response.data)
+  }
+
+  const [balance, setBalance] = useState(0)
+
+  const loadBalance = async () => {
+    if (!currentUser.wallet) {
+      return
+    }
+    const response = await axios.get(
+      `${process.env.REACT_APP_DAPPIFY_API_URL}/wallet/${currentUser.wallet}/balance?chain=${configuration.chainId}`,
+      {
+        headers: {
+          'x-api-Key': process.env.REACT_APP_DAPPIFY_API_KEY,
+          accept: 'application/json'
+        }
+      }
+    )
+    console.log('PARSED')
+    const value = JSON.stringify(response.data?.balance)
+    const parsedBalance = parseFloat(ethers.utils.formatEther(value)).toFixed(4)
+    console.log(parsedBalance)
+    setBalance(parsedBalance)
+  }
 
   useEffect(() => {
     dispatch(fetchCurrentUser())
   }, [dispatch])
+
+  useEffect(() => {
+    if (configuration?.chainId) loadNetwork()
+  }, [configuration])
+
+  useEffect(() => {
+    loadBalance()
+  }, [currentUser.wallet])
 
   const imgSize = { width: 40, height: 40 }
   const image =
@@ -91,7 +140,7 @@ export default function Profile({ t }) {
   }
 
   const renderNetwork = () => {
-    const name = network?.chainName
+    const name = network?.name
     const color = isRightNetwork ? 'success' : 'warning'
     const icon = isRightNetwork ? (
       <CheckCircleOutlineIcon />
@@ -121,8 +170,13 @@ export default function Profile({ t }) {
         {network?.nativeCurrency && (
           <img
             className='img_symbol'
-            src={constants.LOGO[network?.nativeCurrency?.symbol]}
+            src={network?.imageUrl}
             alt={network?.nativeCurrency?.symbol}
+            onError={(event) => {
+              event.target.src =
+                'https://chainlist.org/_next/image?url=%2Funknown-logo.png&w=64&q=75'
+              event.onerror = null
+            }}
           />
         )}
       </Grid>
@@ -132,7 +186,7 @@ export default function Profile({ t }) {
             {t('Balance')}
           </Typography>
           <Typography fontSize='1.5em' fontWeight='500'>
-            {nativeBalance} {network.nativeCurrency.symbol}
+            {balance} {network?.nativeCurrency?.symbol}
           </Typography>
         </Grid>
       </Grid>
