@@ -1,20 +1,44 @@
 import { useState, useEffect, useContext } from 'react'
 import { Alert, Grid, Typography, Button } from '@mui/material'
 import { DappifyContext, constants } from 'react-dappify'
+import axios from 'axios'
 
 const OperationResult = ({ state, t }) => {
   const { project, configuration } = useContext(DappifyContext)
   const [explorerUrl, setExploreUrl] = useState()
 
+  const [network, setNetwork] = useState({})
+
+  const loadNetwork = async () => {
+    if (!configuration?.chainId) {
+      return
+    }
+    const response = await axios.get(
+      `${process.env.REACT_APP_DAPPIFY_API_URL}/chain/${configuration?.chainId}`,
+      {
+        headers: {
+          'x-api-Key': process.env.REACT_APP_DAPPIFY_API_KEY,
+          accept: 'application/json'
+        }
+      }
+    )
+    setNetwork(response.data)
+  }
+
+  useEffect(() => {
+    loadNetwork()
+  }, [])
+
   useEffect(() => {
     const prepareExplorerUrl = () => {
-      const networkDetails = constants.NETWORKS[configuration.chainId]
-      const explorerBase = networkDetails.blockExplorerUrls[0]
-      setExploreUrl(`${explorerBase}/tx/${state.data}`)
+      if (network?.explorers?.length > 0) {
+        const explorerBase = network?.explorers[0]
+        setExploreUrl(`${explorerBase?.url}/tx/${state.data}`)
+      }
     }
 
     prepareExplorerUrl()
-  }, [project, state])
+  }, [project, state, network])
 
   const isTxCompleted = state.loadFailed || state.data
   const errorState = state.loadFailed && (

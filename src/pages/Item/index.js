@@ -20,6 +20,7 @@ import UserProfileMini from 'components/UserProfileMini'
 import RefreshButton from 'components/RefreshButton'
 import isString from 'lodash/isString'
 import { formatPrice } from 'utils/format'
+import axios from 'axios'
 
 const ItemDetail = ({ contractAddress, tokenId, t }) => {
   const [isPreview] = useState(window.location.search.includes('preview=true'))
@@ -35,7 +36,29 @@ const ItemDetail = ({ contractAddress, tokenId, t }) => {
   const [openCheckoutbid, setOpenCheckoutbid] = React.useState(false)
   const [isOpenSale, setOpenSale] = useState(false)
   const { configuration, currentUser } = useContext(DappifyContext)
-  const network = constants.NETWORKS[configuration.chainId]
+  // const network = constants.NETWORKS[configuration.chainId]
+
+  const [network, setNetwork] = useState({})
+
+  const loadNetwork = async () => {
+    if (!configuration?.chainId) {
+      return
+    }
+    const response = await axios.get(
+      `${process.env.REACT_APP_DAPPIFY_API_URL}/chain/${configuration?.chainId}`,
+      {
+        headers: {
+          'x-api-Key': process.env.REACT_APP_DAPPIFY_API_KEY,
+          accept: 'application/json'
+        }
+      }
+    )
+    setNetwork(response.data)
+  }
+
+  useEffect(() => {
+    loadNetwork()
+  }, [])
 
   useEffect(() => {
     dispatch(fetchNftDetail(contractAddress, tokenId))
@@ -210,7 +233,7 @@ const ItemDetail = ({ contractAddress, tokenId, t }) => {
                         onClick={() => setOpenCheckout(true)}
                       >
                         {t('Purchase')} {formatPrice(nft.price)}{' '}
-                        {network.nativeCurrency.symbol}
+                        {network?.nativeCurrency?.symbol}
                       </Button>
                     )}
                     {/* } <button className='btn-main btn2 lead mb-5' onClick={() => setOpenCheckoutbid(true)}>Place Bid</button> */}
