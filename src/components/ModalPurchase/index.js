@@ -21,6 +21,7 @@ import {
   fetchHotAuctions,
   fetchNftsBreakdown
 } from 'store/actions/thunks/nfts'
+import axios from 'axios'
 
 const ModalPurchase = ({ isOpen = false, onClose, isBid, nft, t }) => {
   const dispatch = useDispatch()
@@ -29,7 +30,28 @@ const ModalPurchase = ({ isOpen = false, onClose, isBid, nft, t }) => {
   const { configuration, loadBalances } = useContext(DappifyContext)
   const [qty, setQty] = useState(1)
   const [totalPayable, setTotalPayable] = useState(qty * nft.price)
-  const network = constants.NETWORKS[configuration.chainId]
+
+  const [network, setNetwork] = useState({})
+
+  const loadNetwork = async () => {
+    if (!configuration?.chainId) {
+      return
+    }
+    const response = await axios.get(
+      `${process.env.REACT_APP_DAPPIFY_API_URL}/chain/${configuration?.chainId}`,
+      {
+        headers: {
+          'x-api-Key': process.env.REACT_APP_DAPPIFY_API_KEY,
+          accept: 'application/json'
+        }
+      }
+    )
+    setNetwork(response.data)
+  }
+
+  useEffect(() => {
+    loadNetwork()
+  }, [])
 
   const getToken = () => `${nft?.metadata?.name} #${nft.tokenId}`
 
@@ -74,7 +96,7 @@ const ModalPurchase = ({ isOpen = false, onClose, isBid, nft, t }) => {
           {t('Purchase confirmation', {
             name: getToken(),
             price: nft.price,
-            unit: network.nativeCurrency.symbol
+            unit: network?.nativeCurrency?.symbol
           })}
         </DialogContentText>
         {nft.type === 'ERC1155' && (

@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { DappifyContext, constants, Metadata } from 'react-dappify'
 import { Grid, Typography, Tooltip, Button } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
@@ -26,12 +26,34 @@ import { formatPrice } from 'utils/format'
 // react functional component
 const Details = ({ nft, t }) => {
   const { configuration } = useContext(DappifyContext)
-  const network = constants.NETWORKS[configuration.chainId]
+  // const network = constants.NETWORKS[configuration.chainId]
   const dispatch = useDispatch()
   const [isOpenSale, setOpenSale] = useState(false)
   const [isOpenWithdraw, setOpenWithdraw] = useState(false)
   const [isOpenPurchase, setOpenPurchase] = useState(false)
   const [isOpenEdit, setOpenEdit] = useState(false)
+
+  const [network, setNetwork] = useState({})
+
+  const loadNetwork = async () => {
+    if (!configuration?.chainId) {
+      return
+    }
+    const response = await axios.get(
+      `${process.env.REACT_APP_DAPPIFY_API_URL}/chain/${configuration?.chainId}`,
+      {
+        headers: {
+          'x-api-Key': process.env.REACT_APP_DAPPIFY_API_KEY,
+          accept: 'application/json'
+        }
+      }
+    )
+    setNetwork(response.data)
+  }
+
+  useEffect(() => {
+    loadNetwork()
+  }, [])
 
   const currentUserState = useSelector(selectors.currentUserState)
   const currentUser = currentUserState.data || {}
@@ -200,7 +222,7 @@ const Details = ({ nft, t }) => {
                     onClick={() => canPurchase && setOpenPurchase(true)}
                   >
                     <Typography fontWeight='bold'>
-                      {formatPrice(nft.price)} {network.nativeCurrency.symbol}
+                      {formatPrice(nft.price)} {network?.nativeCurrency?.symbol}
                     </Typography>
                   </Button>
                 </Tooltip>

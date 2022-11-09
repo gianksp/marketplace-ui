@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import { DappifyContext, constants } from 'react-dappify'
@@ -9,18 +9,41 @@ import ModalPurchase from 'components/ModalPurchase'
 import { useTranslation } from 'react-i18next'
 import UserProfileMini from 'components/UserProfileMini'
 import { formatPrice } from 'utils/format'
+import axios from 'axios'
 
 const BidSlide = ({ nft, usdPrice }) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const navigate = useNavigate()
   const { configuration } = useContext(DappifyContext)
-  const network = constants.NETWORKS[configuration.chainId]
+  // const network = constants.NETWORKS[configuration.chainId]
   const [openCheckoutbid, setOpenCheckoutbid] = useState()
 
   const defaultPlaceholder =
     'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png'
   const img = nft.metadata.source.image || nft.metadata.source.image_data
+
+  const [network, setNetwork] = useState({})
+
+  const loadNetwork = async () => {
+    if (!configuration?.chainId) {
+      return
+    }
+    const response = await axios.get(
+      `${process.env.REACT_APP_DAPPIFY_API_URL}/chain/${configuration?.chainId}`,
+      {
+        headers: {
+          'x-api-Key': process.env.REACT_APP_DAPPIFY_API_KEY,
+          accept: 'application/json'
+        }
+      }
+    )
+    setNetwork(response.data)
+  }
+
+  useEffect(() => {
+    loadNetwork()
+  }, [])
 
   return (
     <div className='nft__item_lg'>
@@ -57,7 +80,7 @@ const BidSlide = ({ nft, usdPrice }) => {
                 </span>
                 {nft.price > 0 ? (
                   <h3>
-                    {formatPrice(nft.price)} {network.nativeCurrency.symbol}
+                    {formatPrice(nft.price)} {network?.nativeCurrency?.symbol}
                   </h3>
                 ) : (
                   <h3>{t('Not for sale')}</h3>

@@ -22,16 +22,39 @@ import {
   fetchNftsBreakdown
 } from 'store/actions/thunks/nfts'
 import { fetchCurrentUser } from 'store/actions/thunks/users'
+import axios from 'axios'
 
 const ModalEdit = ({ isOpen = false, onClose, isBid, nft, t }) => {
   const dispatch = useDispatch()
   const nftEditState = useSelector(selectors.nftEditState)
   const isEditing = nftEditState.loading
   const { configuration, loadBalances } = useContext(DappifyContext)
-  const network = constants.NETWORKS[configuration.chainId]
+  // const network = constants.NETWORKS[configuration.chainId]
   const priceOver = configuration?.feature?.bids?.priceOver
   const maxBid = nft?.maxBid || 0
   const [amount, setAmount] = useState()
+
+  const [network, setNetwork] = useState({})
+
+  const loadNetwork = async () => {
+    if (!configuration?.chainId) {
+      return
+    }
+    const response = await axios.get(
+      `${process.env.REACT_APP_DAPPIFY_API_URL}/chain/${configuration?.chainId}`,
+      {
+        headers: {
+          'x-api-Key': process.env.REACT_APP_DAPPIFY_API_KEY,
+          accept: 'application/json'
+        }
+      }
+    )
+    setNetwork(response.data)
+  }
+
+  useEffect(() => {
+    loadNetwork()
+  }, [])
 
   const getToken = () => `${nft?.metadata?.name} #${nft.tokenId}`
 
@@ -83,7 +106,7 @@ const ModalEdit = ({ isOpen = false, onClose, isBid, nft, t }) => {
             onChange={handleAmountChange}
             endAdornment={
               <InputAdornment position='end'>
-                {network.nativeCurrency.symbol}
+                {network?.nativeCurrency?.symbol}
               </InputAdornment>
             }
             aria-describedby='standard-amount-helper-text'

@@ -1,9 +1,10 @@
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Chip, CircularProgress, Grid, Button } from '@mui/material'
 import { DappifyContext, constants } from 'react-dappify'
 import { useNavigate } from '@reach/router'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
+import axios from 'axios'
 
 const ModalActions = ({
   state,
@@ -21,7 +22,29 @@ const ModalActions = ({
     getProviderInstance
   } = useContext(DappifyContext)
   const navigate = useNavigate()
-  const network = constants.NETWORKS[configuration.chainId]
+  // const network = constants.NETWORKS[configuration.chainId]
+
+  const [network, setNetwork] = useState({})
+
+  const loadNetwork = async () => {
+    if (!configuration?.chainId) {
+      return
+    }
+    const response = await axios.get(
+      `${process.env.REACT_APP_DAPPIFY_API_URL}/chain/${configuration?.chainId}`,
+      {
+        headers: {
+          'x-api-Key': process.env.REACT_APP_DAPPIFY_API_KEY,
+          accept: 'application/json'
+        }
+      }
+    )
+    setNetwork(response.data)
+  }
+
+  useEffect(() => {
+    loadNetwork()
+  }, [])
 
   const authOptionsRightNetwork = isAuthenticated && isRightNetwork && (
     <div>
@@ -72,7 +95,7 @@ const ModalActions = ({
   )
 
   const renderNetwork = () => {
-    const name = network?.chainName
+    const name = network?.name
     const color = isRightNetwork ? 'success' : 'warning'
     const icon = isRightNetwork ? (
       <CheckCircleOutlineIcon />

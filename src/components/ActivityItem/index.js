@@ -1,16 +1,41 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Grid, Paper, Button } from '@mui/material'
 import moment from 'moment'
 import { DappifyContext, constants } from 'react-dappify'
 import ImageFadeIn from 'react-image-fade-in'
 import isEmpty from 'lodash/isEmpty'
+import axios from 'axios'
 
 const ActivityItem = ({ nft, index }) => {
   const { configuration } = useContext(DappifyContext)
-  const network = constants.NETWORKS[configuration.chainId]
+  // const network = constants.NETWORKS[configuration.chainId]
+
+  const [network, setNetwork] = useState({})
+
+  const loadNetwork = async () => {
+    if (!configuration?.chainId) {
+      return
+    }
+    const response = await axios.get(
+      `${process.env.REACT_APP_DAPPIFY_API_URL}/chain/${configuration?.chainId}`,
+      {
+        headers: {
+          'x-api-Key': process.env.REACT_APP_DAPPIFY_API_KEY,
+          accept: 'application/json'
+        }
+      }
+    )
+    setNetwork(response.data)
+  }
+
+  useEffect(() => {
+    loadNetwork()
+  }, [])
 
   const getExplorerUrl = () => {
-    return `${network.blockExplorerUrls[0]}/tx/${nft.hash}`
+    const explorers = network?.explorers
+    const prime = explorers && explorers.length > 0 ? explorers[0] : ''
+    return `${prime}/tx/${nft.hash}`
   }
 
   const getOwnerUrl = () => {
