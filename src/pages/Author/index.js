@@ -230,7 +230,8 @@ const Author = ({ address, t }) => {
               <Paper
                 sx={{
                   width: '100%',
-                  padding: 3
+                  padding: 3,
+                  mt: 3
                 }}
               >
                 <Typography variant='h3' fontSize={24} fontWeight='bolb'>

@@ -138,7 +138,7 @@ const Details = ({ nft, t }) => {
 
   const capString = (value, len) => {
     let response = value
-    if ((response.length) > len) {
+    if ((response?.length) > len) {
       response = response.substring(0, len) + '...'
     }
     return response
@@ -154,7 +154,7 @@ const Details = ({ nft, t }) => {
           (1/{nft.quantity ? nft.quantity : 1})
         </Typography>
         <Typography fontSize='1.15em' fontWeight='400'>
-          {capString(nft?.metadata?.name, 30)}
+          {capString(nft?.metadata?.name, 20)}
         </Typography>
       </Grid>
       <Grid container spacing={1} sx={{ px: 1, pt: 1 }}>
