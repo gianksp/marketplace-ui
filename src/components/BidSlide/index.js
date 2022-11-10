@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 import UserProfileMini from 'components/UserProfileMini'
 import { formatPrice } from 'utils/format'
 import axios from 'axios'
+import ImageFadeIn from 'react-image-fade-in'
 
 const BidSlide = ({ nft, usdPrice }) => {
   const { t } = useTranslation()
@@ -21,7 +22,9 @@ const BidSlide = ({ nft, usdPrice }) => {
 
   const defaultPlaceholder =
     'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png'
-  const img = nft.metadata.source.image || nft.metadata.source.image_data
+
+  const img = nft?.metadata?.source?.image || nft?.metadata?.source?.image_data
+  const isBase64 = img && img.startsWith('data')
 
   const [network, setNetwork] = useState({})
 
@@ -48,14 +51,38 @@ const BidSlide = ({ nft, usdPrice }) => {
   return (
     <div className='nft__item_lg'>
       <div className='row align-items-center'>
-        <div className='col-lg-6' style={{ padding: '20px' }}>
-          <embed
-            className='super__size'
-            src={img || defaultPlaceholder}
+        <div
+          className='col-lg-6'
+          style={{ padding: '20px', position: 'relative' }}
+        >
+          <span
             style={{
+              position: 'relative',
+              width: '100%',
+              height: 'auto',
+              overflow: 'hidden',
+              cursor: 'pointer',
               borderRadius: theme?.shape?.borderRadius
             }}
-          />
+          >
+            {!img && (
+              <div className='lazy nft__placeholder'>{nft.metadata.name}</div>
+            )}
+            {img && !isBase64 && (
+              <ImageFadeIn
+                height='auto'
+                width='100%'
+                src={img || defaultPlaceholder}
+                alt=''
+              />
+            )}
+            {img && isBase64 && (
+              <div>
+                <embed src={img || defaultPlaceholder} />
+              </div>
+            )}
+          </span>
+
           {nft?.metadata?.animation_url && (
             <audio
               src={nft.metadata.animation_url}
