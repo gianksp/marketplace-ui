@@ -136,17 +136,25 @@ const Details = ({ nft, t }) => {
     }
   }
 
+  const capString = (value, len) => {
+    let response = value
+    if ((response.length) > len) {
+      response = response.substring(0, len) + '...'
+    }
+    return response
+  }
+
   return (
     <Grid container spacing={1} sx={{ px: 1, m: 0 }}>
       <Grid item xs={12}>
         <Typography fontSize='0.85em' fontWeight='bold' color='text.secondary'>
-          {`${nft?.collection?.name ? nft?.collection?.name : ''} #${
-            nft.tokenId
+          {`${capString(nft?.collection?.name, 20)} #${
+            capString(nft?.tokenId, 8)
           }`}{' '}
-          (1/{nft.quantity ? nft.quantity : 1}}
+          (1/{nft.quantity ? nft.quantity : 1})
         </Typography>
         <Typography fontSize='1.15em' fontWeight='400'>
-          {nft.metadata?.name}
+          {capString(nft?.metadata?.name, 30)}
         </Typography>
       </Grid>
       <Grid container spacing={1} sx={{ px: 1, pt: 1 }}>
