@@ -21,6 +21,7 @@ import RefreshButton from 'components/RefreshButton'
 import isString from 'lodash/isString'
 import { formatPrice } from 'utils/format'
 import axios from 'axios'
+import ImageFadeIn from 'react-image-fade-in'
 
 const ItemDetail = ({ contractAddress, tokenId, t }) => {
   const [isPreview] = useState(window.location.search.includes('preview=true'))
@@ -123,20 +124,45 @@ const ItemDetail = ({ contractAddress, tokenId, t }) => {
 
   const defaultPlaceholder =
     'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png'
+
   const img = nft?.metadata?.source?.image || nft?.metadata?.source?.image_data
+  const isBase64 = img && img.startsWith('data')
 
   return (
     <div className='theme-background'>
       <section className='container'>
         <div className='row mt-md-5 pt-md-4'>
           <div className='col-md-6 text-center'>
-            <embed
-              className='super__size'
-              src={img || defaultPlaceholder}
+            <span
               style={{
+                position: 'relative',
+                width: '100%',
+                height: 'auto',
+                overflow: 'hidden',
+                cursor: 'pointer',
                 borderRadius: theme?.shape?.borderRadius
               }}
-            />
+            >
+              {!img && (
+                <div className='lazy nft__placeholder'>
+                  {nft?.metadata?.name}
+                </div>
+              )}
+              {img && !isBase64 && (
+                <ImageFadeIn
+                  height='auto'
+                  width='100%'
+                  src={img || defaultPlaceholder}
+                  alt=''
+                />
+              )}
+              {img && isBase64 && (
+                <div>
+                  <embed src={img || defaultPlaceholder} />
+                </div>
+              )}
+            </span>
+
             {nft?.metadata?.animation_url && (
               <audio
                 src={nft.metadata.animation_url}
