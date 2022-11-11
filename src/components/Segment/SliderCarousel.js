@@ -13,10 +13,12 @@ const GlobalStyles = createGlobalStyle`
   .nft-big .slick-prev::before{
     left: 0;
     line-height: 40px;
+    content: '◀' !important;
   }
   .nft-big .slick-next::before {
     right: 0;
     line-height: 40px;
+    content: '▶' !important;
   }
   .nft-big .slick-prev, .nft-big .slick-next{
     border: 1px solid var(--palette-text);
