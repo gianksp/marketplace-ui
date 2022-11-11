@@ -1538,7 +1538,7 @@ a{
     }
 }
 .previousButton::before, .nextButton::before{
-    content:"\f054";
+    content:"▶";
     font-family: FontAwesome;
     font-size: 1.3rem;
     font-style: normal;
@@ -5664,7 +5664,7 @@ blockquote {
     -webkit-border-radius: 30px;
     &:before {
       font-family: FontAwesome;
-      content: "\f04b";
+      content: "▶";
       font-size: 24px;
       color: #ffffff;
       padding-left: 5px;
@@ -5672,7 +5672,7 @@ blockquote {
       position: relative;
     }
     &.pause::before {
-      content: "\f04c";
+      content: "◼";
       padding-left: 0;
       top: -5px;
       position: relative;
